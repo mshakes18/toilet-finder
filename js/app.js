@@ -3729,6 +3729,6 @@ function createPopUp(toilet) {
 
   const popup = new mapboxgl.Popup({ closeOnClick: false })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>Toilet</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p>`)
     .addTo(map);
 }
