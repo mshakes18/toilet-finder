@@ -3620,12 +3620,12 @@ const toilets = {
       }
     }
   ]
-} 
+}
 
 /* Assign a unique ID to each toilet */
-toilets.features.forEach( function(toilet, i){
-toilet.properties.id =i;
-}); 
+toilets.features.forEach(function (toilet, i) {
+  toilet.properties.id = i;
+});
 
 // adding to map layer
 map.on('load', () => {
@@ -3636,10 +3636,41 @@ map.on('load', () => {
     /* Add a GeoJSON source containing place coordinates and information. */
     source: {
       type: 'geojson',
-      data: toilets, 
+      data: toilets,
     }
   });
-}); 
+  buildLocationList(toilets)
+});
+
+map.on('click', (event) => {
+  /* Determine if a feature in the "locations" layer exists at that point. */
+  const features = map.queryRenderedFeatures(event.point, {
+    layers: ['locations']
+  });
+
+  /* If it does not exist, return */
+  if (!features.length) return;
+
+  const clickedPoint = features[0];
+
+  /* Fly to the point */
+  flyToStore(clickedPoint);
+
+  /* Close all other popups and display popup for clicked store */
+  createPopUp(clickedPoint);
+
+  /* Highlight listing in sidebar (and remove highlight for all other listings) */
+  const activeItem = document.getElementsByClassName('active');
+  if (activeItem[0]) {
+    activeItem[0].classList.remove('active');
+  }
+  const listing = document.getElementById(
+    `listing-${clickedPoint.properties.id}`
+  );
+  listing.classList.add('active');
+});
+
+
 
 function buildLocationList(toilets) {
   for (const toilet of toilets.features) {
@@ -3656,11 +3687,24 @@ function buildLocationList(toilets) {
     link.href = '#';
     link.className = 'title';
     link.id = `link-${toilet.properties.id}`;
-    link.innerHTML = `${toilet.properties.street_address}`;
+    link.innerHTML = `${toilet.properties.business_name}`;
+    link.addEventListener('click', function () {
+      for (const feature of toilets.features) {
+        if (this.id === `link-${feature.properties.id}`) {
+          flyToStore(feature);
+          createPopUp(feature);
+        }
+      }
+      const activeItem = document.getElementsByClassName('active');
+      if (activeItem[0]) {
+        activeItem[0].classList.remove('active');
+      }
+      this.parentNode.classList.add('active');
+    });
 
     /* Add details to the individual listing. */
     const details = listing.appendChild(document.createElement('div'));
-    details.innerHTML = `${toilet.properties.business_name}`;
+    details.innerHTML = `${toilet.properties.street_address}`;
     if (toilet.properties.code) {
       details.innerHTML += ` · ${toilet.properties.code}`;
     }
@@ -3669,4 +3713,22 @@ function buildLocationList(toilets) {
     //   details.innerHTML += `<div><strong>${roundedDistance} miles away</strong></div>`;
     // }
   }
+}
+
+function flyToStore(currentFeature) {
+  map.flyTo({
+    center: currentFeature.geometry.coordinates,
+    zoom: 15
+  });
+}
+
+function createPopUp(currentFeature) {
+  const popUps = document.getElementsByClassName('mapboxgl-popup');
+  /** Check if there is already a popup on the map and if so, remove it */
+  if (popUps[0]) popUps[0].remove();
+
+  const popup = new mapboxgl.Popup({ closeOnClick: false })
+    .setLngLat(currentFeature.geometry.coordinates)
+    .setHTML(`<h3>Sweetgreen</h3><h4>${currentFeature.properties.address}</h4>`)
+    .addTo(map);
 }
