@@ -140,8 +140,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.112728731,
-          51.50822211
+          -0.111330,
+          51.522080
         ]
       }
     },
@@ -1598,8 +1598,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.135063387,
-          51.52516138
+          -0.13631002983836993,
+          51.52257998079182
         ]
       }
     },
@@ -1994,8 +1994,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.072660402,
-          51.5005474
+          -0.072230,
+          51.524590
         ]
       }
     },
@@ -2012,8 +2012,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.0172374,
-          51.56078757
+          -0.017049964525284622,
+          51.5005300014748
         ]
       }
     },
@@ -2066,8 +2066,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.071830374,
-          51.58300018
+          -0.07176997303466304,
+          51.50642518896387
         ]
       }
     },
@@ -2156,8 +2156,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.302405743,
-          51.4980811
+          -0.3023199924744233,
+          51.514710002352814
         ]
       }
     },
@@ -2372,8 +2372,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.10581166,
-          51.56554542
+          -0.10590275839769232,
+          51.53105948544409
         ]
       }
     },
@@ -2552,8 +2552,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.177498718,
-          51.54798405
+          0.17744002872026954,
+          51.55592998096529
         ]
       }
     },
@@ -2750,8 +2750,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.279780145,
-          51.46124407
+          -0.2800200228952008,
+          51.560059996116934
         ]
       }
     },
@@ -3272,8 +3272,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.018004502,
-          51.48899643
+          -0.018080,
+          51.447210
         ]
       }
     },
@@ -3344,8 +3344,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          0.054939082,
-          51.48112324
+          0.055130,
+          51.450750
         ]
       }
     },
@@ -3380,8 +3380,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.010420045,
-          51.49931447
+          0.010330025111471741,
+          51.48185998270375
         ]
       }
     },
@@ -3400,24 +3400,6 @@ const toilets = {
         "coordinates": [
           -0.112491502,
           51.50544919
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "business_name": "Caffè Nero",
-        "code": 531,
-        "street_address": "Unit B 6 More London Place Tooley St London SE1 2DA",
-        "accessible": "N",
-        "gender_neutral": "Y",
-        "country": "United Kingdom"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -0.083156874,
-          51.50732352
         ]
       }
     },
@@ -3506,8 +3488,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.052574945,
-          51.50250976
+          -0.059580,
+          51.418090
         ]
       }
     },
@@ -3630,17 +3612,57 @@ toilets.features.forEach(function (toilet, i) {
 // adding to map layer
 map.on('load', () => {
   /* Add the data to your map as a layer */
-  map.addLayer({
-    id: 'locations',
-    type: 'circle',
-    /* Add a GeoJSON source containing place coordinates and information. */
-    source: {
-      type: 'geojson',
-      data: toilets,
-    }
+  map.addSource('places', {
+    type: 'geojson',
+    data: toilets
   });
   buildLocationList(toilets)
+  addMarkers();
 });
+
+/** * Add a marker to the map for every store listing.
+      **/
+function addMarkers() {
+  /* For each feature in the GeoJSON object above: */
+  for (const marker of toilets.features) {
+    /* Create a div element for the marker. */
+    const el = document.createElement('div');
+    /* Assign a unique `id` to the marker. */
+    el.id = `marker-${marker.properties.id}`;
+    /* Assign the `marker` class to each marker for styling. */
+    el.className = 'marker';
+
+    /**
+     * Create a marker using the div element
+     * defined above and add it to the map.
+     **/
+    new mapboxgl.Marker(el, { offset: [0, -23] })
+      .setLngLat(marker.geometry.coordinates)
+      .addTo(map);
+
+    el.addEventListener('click', (e) => {
+      /* Fly to the point */
+      flyToStore(marker);
+      /* Close all other popups and display popup for clicked store */
+      createPopUp(marker);
+      /* Highlight listing in sidebar */
+      const activeItem = document.getElementsByClassName('active');
+      e.stopPropagation();
+      if (activeItem[0]) {
+        activeItem[0].classList.remove('active');
+      }
+      const listing = document.getElementById(
+        `listing-${marker.properties.id}`
+      );
+      listing.classList.add('active');
+    });
+  }
+}
+
+
+
+
+
 
 map.on('click', (event) => {
   /* Determine if a feature in the "locations" layer exists at that point. */
