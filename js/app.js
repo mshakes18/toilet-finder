@@ -2264,8 +2264,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.204064189,
-          51.50475427
+          -0.2040838,
+          51.51455
         ]
       }
     },
@@ -2552,7 +2552,7 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          0.17744002872026954,
+          -0.17744002872026954,
           51.55592998096529
         ]
       }
@@ -3434,8 +3434,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.083211702,
-          51.47509468
+          -0.08097398769781361,
+          51.50378581463087
         ]
       }
     },
@@ -3616,6 +3616,16 @@ map.on('load', () => {
     type: 'geojson',
     data: toilets
   });
+  // geocoder
+  const geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken, // Set the access token
+    mapboxgl: mapboxgl, // Set the mapbox-gl instance
+    marker: true, // Use the geocoder's default marker style
+    bbox: [-0.51037513, 51.28676019, 0.33401545, 51.69187409] // Set the bounding box coordinates
+  });
+
+  map.addControl(geocoder, 'top-left');
+
   buildLocationList(toilets)
   addMarkers();
 });
@@ -3658,10 +3668,6 @@ function addMarkers() {
     });
   }
 }
-
-
-
-
 
 
 map.on('click', (event) => {
