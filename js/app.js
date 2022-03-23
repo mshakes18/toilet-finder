@@ -1014,7 +1014,7 @@ const toilets = {
       "properties": {
         "business_name": "Paddington Station",
         "code": "No code",
-        "street_address": "Praed St Paddington London",
+        "street_address": "Praed St, London W2 1HB",
         "accessible": "Y - there's also a Changing Places and a shower",
         "gender_neutral": "N",
         "country": "United Kingdom"
@@ -1022,8 +1022,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          0.17248727785351625,
-          51.51732871896947
+          -0.170270,
+          51.5191507
         ]
       }
     },
@@ -1058,8 +1058,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.136205102,
-          51.5078139
+          -0.13619000098489664,
+          51.511299992683945
         ]
       }
     },
@@ -3639,7 +3639,7 @@ map.on('load', () => {
         options
       );
       const activeListing = document.getElementById(
-        `listing-${stores.features[0].properties.id}`
+        `listing-${toilets.features[0].properties.id}`
       );
       activeListing.classList.add('active');
 
