@@ -2264,8 +2264,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.204064189,
-          51.50475427
+          -0.2040838,
+          51.51455
         ]
       }
     },
@@ -2552,7 +2552,7 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          0.17744002872026954,
+          -0.17744002872026954,
           51.55592998096529
         ]
       }
@@ -3434,8 +3434,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.083211702,
-          51.47509468
+          -0.08097398769781361,
+          51.50378581463087
         ]
       }
     },
@@ -3616,9 +3616,51 @@ map.on('load', () => {
     type: 'geojson',
     data: toilets
   });
+  // geocoder
+  const geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken, // Set the access token
+    mapboxgl: mapboxgl, // Set the mapbox-gl instance
+    marker: true, // Use the geocoder's default marker style
+    bbox: [-0.51037513, 51.28676019, 0.33401545, 51.69187409] // Set the bounding box coordinates
+  });
+
+  map.addControl(geocoder, 'top-left');
   buildLocationList(toilets)
   addMarkers();
+
+  geocoder.on('result', (event) => {
+    /* Get the coordinate of the search result */
+    const searchResult = event.result.geometry;
+    const options = { units: 'miles' };
+    for (const toilet of toilets.features) {
+      toilet.properties.distance = turf.distance(
+        searchResult,
+        toilet.geometry,
+        options
+      );
+      const activeListing = document.getElementById(
+        `listing-${stores.features[0].properties.id}`
+      );
+      activeListing.classList.add('active');
+
+    }
+    toilets.features.sort((a, b) => {
+      if (a.properties.distance > b.properties.distance) {
+        return 1;
+      }
+      if (a.properties.distance < b.properties.distance) {
+        return -1;
+      }
+      return 0; // a must be equal to b
+    });
+  });
 });
+
+const listings = document.getElementById('listings');
+while (listings.firstChild) {
+  listings.removeChild(listings.firstChild);
+}
+buildLocationList(toilets);
 
 /** * Add a marker to the map for every store listing.
       **/
@@ -3658,10 +3700,6 @@ function addMarkers() {
     });
   }
 }
-
-
-
-
 
 
 map.on('click', (event) => {
@@ -3710,6 +3748,10 @@ function buildLocationList(toilets) {
     link.className = 'title';
     link.id = `link-${toilet.properties.id}`;
     link.innerHTML = `${toilet.properties.business_name}`;
+    if (toilet.properties.distance) {
+      const roundedDistance = Math.round(toilet.properties.distance * 100) / 100;
+      details.innerHTML += `<div><strong>${roundedDistance} miles away</strong></div>`;
+    }
     link.addEventListener('click', function () {
       for (const feature of toilets.features) {
         if (this.id === `link-${feature.properties.id}`) {
@@ -3730,10 +3772,6 @@ function buildLocationList(toilets) {
     if (toilet.properties.code) {
       details.innerHTML += ` · ${toilet.properties.code}`;
     }
-    // if (store.properties.distance) {
-    //   const roundedDistance = Math.round(store.properties.distance * 100) / 100;
-    //   details.innerHTML += `<div><strong>${roundedDistance} miles away</strong></div>`;
-    // }
   }
 }
 
