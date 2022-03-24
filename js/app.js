@@ -3653,14 +3653,13 @@ map.on('load', () => {
       }
       return 0; // a must be equal to b
     });
+    const listings = document.getElementById('listings');
+    while (listings.firstChild) {
+      listings.removeChild(listings.firstChild);
+    }
+    buildLocationList(toilets);
   });
 });
-
-const listings = document.getElementById('listings');
-while (listings.firstChild) {
-  listings.removeChild(listings.firstChild);
-}
-buildLocationList(toilets);
 
 /** * Add a marker to the map for every store listing.
       **/
@@ -3700,7 +3699,6 @@ function addMarkers() {
     });
   }
 }
-
 
 map.on('click', (event) => {
   /* Determine if a feature in the "locations" layer exists at that point. */
@@ -3750,6 +3748,13 @@ function buildLocationList(toilets) {
     link.innerHTML = `${toilet.properties.business_name}`;
     if (toilet.properties.distance) {
       const roundedDistance = Math.round(toilet.properties.distance * 100) / 100;
+
+      /* Add details to the individual listing. */
+      const details = listing.appendChild(document.createElement('div'));
+      details.innerHTML = `${toilet.properties.street_address}`;
+      if (toilet.properties.code) {
+        details.innerHTML += ` · ${toilet.properties.code}`;
+      }
       details.innerHTML += `<div><strong>${roundedDistance} miles away</strong></div>`;
     }
     link.addEventListener('click', function () {
@@ -3765,13 +3770,6 @@ function buildLocationList(toilets) {
       }
       this.parentNode.classList.add('active');
     });
-
-    /* Add details to the individual listing. */
-    const details = listing.appendChild(document.createElement('div'));
-    details.innerHTML = `${toilet.properties.street_address}`;
-    if (toilet.properties.code) {
-      details.innerHTML += ` · ${toilet.properties.code}`;
-    }
   }
 }
 
