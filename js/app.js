@@ -3604,6 +3604,25 @@ const toilets = {
   ]
 }
 
+
+// Geolocate 
+const geolocate = new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true
+  },
+  trackUserLocation: true
+});
+// Add the control to the map.
+map.addControl(geolocate);
+// Set an event listener that fires
+// when a geolocate event occurs.
+geolocate.on('geolocate', (e) => {
+  const lon = e.coords.longitude;
+  const lat = e.coords.latitude
+  const position = [lon, lat]
+  console.log(position);
+});
+
 /* Assign a unique ID to each toilet */
 toilets.features.forEach(function (toilet, i) {
   toilet.properties.id = i;
@@ -3658,6 +3677,15 @@ map.on('load', () => {
       listings.removeChild(listings.firstChild);
     }
     buildLocationList(toilets);
+
+    const bbox = getBbox(toilets, 0, searchResult);
+    map.fitBounds(bbox, {
+      padding: 100
+    });
+
+    createPopUp(toilets.features[0]);
+
+
   });
 });
 
@@ -3746,15 +3774,18 @@ function buildLocationList(toilets) {
     link.className = 'title';
     link.id = `link-${toilet.properties.id}`;
     link.innerHTML = `${toilet.properties.business_name}`;
+
+    /* Add details to the individual listing. */
+    const details = listing.appendChild(document.createElement('div'));
+    details.innerHTML = `${toilet.properties.street_address}`;
+    if (toilet.properties.code) {
+      details.innerHTML += ` · ${toilet.properties.code}`;
+    }
+
     if (toilet.properties.distance) {
       const roundedDistance = Math.round(toilet.properties.distance * 100) / 100;
 
-      /* Add details to the individual listing. */
-      const details = listing.appendChild(document.createElement('div'));
-      details.innerHTML = `${toilet.properties.street_address}`;
-      if (toilet.properties.code) {
-        details.innerHTML += ` · ${toilet.properties.code}`;
-      }
+
       details.innerHTML += `<div><strong>${roundedDistance} miles away</strong></div>`;
     }
     link.addEventListener('click', function () {
@@ -3787,6 +3818,42 @@ function createPopUp(toilet) {
 
   const popup = new mapboxgl.Popup({ closeOnClick: false })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button>get directions</button>`)
     .addTo(map);
 }
+
+
+// show nearest toilet after searching
+function getBbox(sortedToilets, toiletIdentifier, searchResult) {
+  const lats = [
+    sortedToilets.features[toiletIdentifier].geometry.coordinates[1],
+    searchResult.coordinates[1]
+  ];
+  const lons = [
+    sortedToilets.features[toiletIdentifier].geometry.coordinates[0],
+    searchResult.coordinates[0]
+  ];
+  const sortedLons = lons.sort((a, b) => {
+    if (a > b) {
+      return 1;
+    }
+    if (a.distance < b.distance) {
+      return -1;
+    }
+    return 0;
+  });
+  const sortedLats = lats.sort((a, b) => {
+    if (a > b) {
+      return 1;
+    }
+    if (a.distance < b.distance) {
+      return -1;
+    }
+    return 0;
+  });
+  return [
+    [sortedLons[0], sortedLats[0]],
+    [sortedLons[1], sortedLats[1]]
+  ];
+}
+
