@@ -3605,6 +3605,7 @@ const toilets = {
 }
 
 
+
 // Geolocate 
 const geolocate = new mapboxgl.GeolocateControl({
   positionOptions: {
@@ -3614,14 +3615,11 @@ const geolocate = new mapboxgl.GeolocateControl({
 });
 // Add the control to the map.
 map.addControl(geolocate);
-// Set an event listener that fires
-// when a geolocate event occurs.
-geolocate.on('geolocate', (e) => {
-  const lon = e.coords.longitude;
-  const lat = e.coords.latitude
-  const position = [lon, lat]
-  console.log(position);
-});
+
+
+// zoom controls
+const nav = new mapboxgl.NavigationControl();
+map.addControl(nav, 'top-right');
 
 /* Assign a unique ID to each toilet */
 toilets.features.forEach(function (toilet, i) {
@@ -3684,10 +3682,31 @@ map.on('load', () => {
     });
 
     createPopUp(toilets.features[0]);
-
-
   });
 });
+
+// Set an event listener that fires
+// when a geolocate event occurs.
+geolocate.on('geolocate', (e) => {
+  const lon = e.coords.longitude;
+  const lat = e.coords.latitude;
+  const userPosition = [lon, lat]
+  console.log(userPosition);
+  // setting user location as starting point when geolocate button is pressed
+  directions.setOrigin([e.coords.longitude, e.coords.latitude])
+  directions.setDestination
+
+});
+
+
+
+// directions fields 
+const directions = new MapboxDirections({
+  accessToken: mapboxgl.accessToken,
+});
+map.addControl(directions, 'top-left');
+
+
 
 /** * Add a marker to the map for every store listing.
       **/
@@ -3818,7 +3837,7 @@ function createPopUp(toilet) {
 
   const popup = new mapboxgl.Popup({ closeOnClick: false })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button>get directions</button>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions" onclick="getDirections()">get directions</button>`)
     .addTo(map);
 }
 
@@ -3856,4 +3875,7 @@ function getBbox(sortedToilets, toiletIdentifier, searchResult) {
     [sortedLons[1], sortedLats[1]]
   ];
 }
-
+// Get directions button
+function getDirections() {
+  console.log("you clicked the button")
+}
