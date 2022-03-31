@@ -3688,16 +3688,13 @@ map.on('load', () => {
 // Set an event listener that fires
 // when a geolocate event occurs.
 geolocate.on('geolocate', (e) => {
-  const lon = e.coords.longitude;
-  const lat = e.coords.latitude;
+  const glon = e.coords.longitude;
+  const glat = e.coords.latitude;
   const userPosition = [lon, lat]
-  console.log(userPosition);
   // setting user location as starting point when geolocate button is pressed
   directions.setOrigin([e.coords.longitude, e.coords.latitude])
-  directions.setDestination
 
 });
-
 
 
 // directions fields 
@@ -3834,14 +3831,14 @@ function createPopUp(toilet) {
   const popUps = document.getElementsByClassName('mapboxgl-popup');
   /** Check if there is already a popup on the map and if so, remove it */
   if (popUps[0]) popUps[0].remove();
-
+  console.log(toilet)
   const popup = new mapboxgl.Popup({ closeOnClick: false })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions" onclick="getDirections()">get directions</button>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]} )">get directions</button>`)
     .addTo(map);
 }
 
-
+// e.coords.longitude, e.coords.latitude
 // show nearest toilet after searching
 function getBbox(sortedToilets, toiletIdentifier, searchResult) {
   const lats = [
@@ -3876,6 +3873,9 @@ function getBbox(sortedToilets, toiletIdentifier, searchResult) {
   ];
 }
 // Get directions button
-function getDirections() {
-  console.log("you clicked the button")
+function getDirections(lat, long, glat, glong) {
+  directions.setDestination([lat, long])
+  // setting user location as starting point when geolocate button is pressed
+  directions.setOrigin([glat, glong])
+  console.log(glat, glong)
 }
