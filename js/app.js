@@ -3873,9 +3873,27 @@ function getBbox(sortedToilets, toiletIdentifier, searchResult) {
   ];
 }
 // Get directions button
-function getDirections(lat, long, glat, glong) {
+function getDirections(lat, long) {
+
+  options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+  };
+
+  function success(pos) {
+    const position = pos.coords;
+    console.log('Your current position is:');
+    console.log(`Latitude : ${position.latitude}`);
+    console.log(`Longitude: ${position.longitude}`);
+    console.log(`More or less ${position.accuracy} meters.`);
+    directions.setOrigin([position.longitude, position.latitude])
+  }
+
+
+  function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  }
+  navigator.geolocation.getCurrentPosition(success, error, options)
   directions.setDestination([lat, long])
-  // setting user location as starting point when geolocate button is pressed
-  directions.setOrigin([glat, glong])
-  console.log(glat, glong)
 }
