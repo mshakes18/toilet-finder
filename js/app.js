@@ -2678,8 +2678,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.072585845,
-          51.53407935
+          -0.07152998823278267,
+          51.58561000674294
         ]
       }
     },
@@ -3685,12 +3685,16 @@ map.on('load', () => {
   });
 });
 
+
+// document.getElementsByClassName('mapboxgl-ctrl-geocoder--input').append('heading')
+
+
 // Set an event listener that fires
 // when a geolocate event occurs.
 geolocate.on('geolocate', (e) => {
   const glon = e.coords.longitude;
   const glat = e.coords.latitude;
-  const userPosition = [lon, lat]
+  // const userPosition = [lon, lat]
   // setting user location as starting point when geolocate button is pressed
   directions.setOrigin([e.coords.longitude, e.coords.latitude])
 
@@ -3823,7 +3827,7 @@ function buildLocationList(toilets) {
 function flyToStore(toilet) {
   map.flyTo({
     center: toilet.geometry.coordinates,
-    zoom: 15
+    zoom: 13
   });
 }
 
@@ -3838,7 +3842,6 @@ function createPopUp(toilet) {
     .addTo(map);
 }
 
-// e.coords.longitude, e.coords.latitude
 // show nearest toilet after searching
 function getBbox(sortedToilets, toiletIdentifier, searchResult) {
   const lats = [
@@ -3896,4 +3899,13 @@ function getDirections(lat, long) {
   }
   navigator.geolocation.getCurrentPosition(success, error, options)
   directions.setDestination([lat, long])
+
+  map.fitBounds([
+    [position.latitude],
+    [position.longitude]
+  ]);
 }
+
+
+const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")
+const searchListing = document.getElementsByClassName("heading")
