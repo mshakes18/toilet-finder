@@ -3899,12 +3899,7 @@ function getDirections(lat, long) {
   }
   navigator.geolocation.getCurrentPosition(success, error, options)
   directions.setDestination([lat, long])
-
-  map.fitBounds([
-    [position.latitude],
-    [position.longitude]
-  ]);
-}
+};
 
 
 const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")
