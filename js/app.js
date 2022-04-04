@@ -3686,7 +3686,7 @@ map.on('load', () => {
 });
 
 
-// document.getElementsByClassName('mapboxgl-ctrl-geocoder--input').append('heading')
+
 
 
 // Set an event listener that fires
@@ -3799,7 +3799,7 @@ function buildLocationList(toilets) {
     const details = listing.appendChild(document.createElement('div'));
     details.innerHTML = `${toilet.properties.street_address}`;
     if (toilet.properties.code) {
-      details.innerHTML += ` · ${toilet.properties.code}`;
+      details.innerHTML += ` <p class="code">${toilet.properties.code}</p>`;
     }
 
     if (toilet.properties.distance) {
@@ -3838,7 +3838,7 @@ function createPopUp(toilet) {
   console.log(toilet)
   const popup = new mapboxgl.Popup({ closeOnClick: false })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]} )">get directions</button>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions button is-success m-1" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]} )">get directions</button>`)
     .addTo(map);
 }
 
@@ -3899,13 +3899,11 @@ function getDirections(lat, long) {
   }
   navigator.geolocation.getCurrentPosition(success, error, options)
   directions.setDestination([lat, long])
-
-  map.fitBounds([
-    [position.latitude],
-    [position.longitude]
-  ]);
-}
+};
 
 
-const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")
-const searchListing = document.getElementsByClassName("heading")
+const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl");
+const searchListing = document.getElementsByClassName("heading");
+
+console.log(toiletSearchField, searchListing);
+searchListing.appendChild(toiletSearchField)
