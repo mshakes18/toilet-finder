@@ -1,3 +1,5 @@
+
+
 * {
   box-sizing: border-box;
 }
@@ -9,6 +11,7 @@ body {
   padding: 0;
   -webkit-font-smoothing: antialiased;
 }
+
 
 h1 {
   font-size: 22px;
@@ -171,4 +174,6 @@ font-size: 500px;
   margin-left: 0; 
  
 }
-
+.mapbox-directions-component .mapbox-directions-route-summary{
+  
+}
