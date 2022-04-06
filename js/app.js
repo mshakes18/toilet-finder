@@ -3605,7 +3605,6 @@ const toilets = {
 }
 
 
-
 // Geolocate 
 const geolocate = new mapboxgl.GeolocateControl({
   positionOptions: {
@@ -3682,10 +3681,12 @@ map.on('load', () => {
     });
 
     createPopUp(toilets.features[0]);
+
   });
+  const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")[0];
+  const searchListing = document.getElementsByClassName("heading")[0];
+  searchListing.appendChild(toiletSearchField)
 });
-
-
 
 
 
@@ -3821,6 +3822,7 @@ function buildLocationList(toilets) {
       }
       this.parentNode.classList.add('active');
     });
+
   }
 }
 
@@ -3902,8 +3904,6 @@ function getDirections(lat, long) {
 };
 
 
-const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl");
-const searchListing = document.getElementsByClassName("heading");
 
-console.log(toiletSearchField, searchListing);
-searchListing.appendChild(toiletSearchField)
+
+
