@@ -3605,7 +3605,6 @@ const toilets = {
 }
 
 
-
 // Geolocate 
 const geolocate = new mapboxgl.GeolocateControl({
   positionOptions: {
@@ -3638,12 +3637,13 @@ map.on('load', () => {
     accessToken: mapboxgl.accessToken, // Set the access token
     mapboxgl: mapboxgl, // Set the mapbox-gl instance
     marker: true, // Use the geocoder's default marker style
-    bbox: [-0.51037513, 51.28676019, 0.33401545, 51.69187409] // Set the bounding box coordinates
+    bbox: [-0.51037513, 51.28676019, 0.33401545, 51.69187409] // Set the bounding box coordinates 
   });
 
   map.addControl(geocoder, 'top-left');
   buildLocationList(toilets)
   addMarkers();
+
 
   geocoder.on('result', (event) => {
     /* Get the coordinate of the search result */
@@ -3682,10 +3682,18 @@ map.on('load', () => {
     });
 
     createPopUp(toilets.features[0]);
+
   });
+
+  // orgin field
+  const originField = document.getElementById("mapbox-directions-origin-input");
+  originField.classList.add("input", "is-rounded");
+  // toilet search
+  const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")[0];
+  const searchListing = document.getElementsByClassName("heading")[0];
+  searchListing.appendChild(toiletSearchField)
+  toiletSearchField.classList.add("input", "is-rounded");
 });
-
-
 
 
 
@@ -3821,6 +3829,7 @@ function buildLocationList(toilets) {
       }
       this.parentNode.classList.add('active');
     });
+
   }
 }
 
@@ -3840,6 +3849,9 @@ function createPopUp(toilet) {
     .setLngLat(toilet.geometry.coordinates)
     .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions button is-success m-1" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]} )">get directions</button>`)
     .addTo(map);
+  // pop up heading styling
+  const popUpHeadings = document.getElementsByTagName("h3")[0]
+  popUpHeadings.classList.add("is-size-4")
 }
 
 // show nearest toilet after searching
@@ -3901,9 +3913,3 @@ function getDirections(lat, long) {
   directions.setDestination([lat, long])
 };
 
-
-const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl");
-const searchListing = document.getElementsByClassName("heading");
-
-console.log(toiletSearchField, searchListing);
-searchListing.appendChild(toiletSearchField)
