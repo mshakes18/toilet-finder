@@ -3685,15 +3685,16 @@ map.on('load', () => {
 
   });
 
-  // orgin field
+  // origin field
   const originField = document.getElementById("mapbox-directions-origin-input");
   originField.classList.add("input", "is-rounded");
   // toilet search
   const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")[0];
   const searchListing = document.getElementsByClassName("heading")[0];
   searchListing.appendChild(toiletSearchField)
-  toiletSearchField.classList.add("input", "is-rounded");
+  toiletSearchField.classList.add("input", "is-rounded", "display-fix");
 });
+
 
 
 
@@ -3807,7 +3808,7 @@ function buildLocationList(toilets) {
     const details = listing.appendChild(document.createElement('div'));
     details.innerHTML = `${toilet.properties.street_address}`;
     if (toilet.properties.code) {
-      details.innerHTML += ` <p class="code">${toilet.properties.code}</p>`;
+      details.innerHTML += ` <div class="listing-code"><p>Code ${toilet.properties.code}</p></div><button class="button is-info" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">Get Directions</button>`;
     }
 
     if (toilet.properties.distance) {
@@ -3830,6 +3831,7 @@ function buildLocationList(toilets) {
       this.parentNode.classList.add('active');
     });
 
+
   }
 }
 
@@ -3845,13 +3847,15 @@ function createPopUp(toilet) {
   /** Check if there is already a popup on the map and if so, remove it */
   if (popUps[0]) popUps[0].remove();
   console.log(toilet)
-  const popup = new mapboxgl.Popup({ closeOnClick: false })
+  const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: true })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <button class="get-directions button is-success m-1" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]} )">get directions</button>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <h4>code: ${toilet.properties.code}</h4><button class="get-directions button is-info m-1" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
     .addTo(map);
+
   // pop up heading styling
   const popUpHeadings = document.getElementsByTagName("h3")[0]
-  popUpHeadings.classList.add("is-size-4")
+  popUpHeadings.classList.add("is-size-6")
+
 }
 
 // show nearest toilet after searching
