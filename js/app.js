@@ -3697,6 +3697,7 @@ map.on('load', () => {
 
 
 
+
 // Set an event listener that fires
 // when a geolocate event occurs.
 geolocate.on('geolocate', (e) => {
@@ -3807,7 +3808,7 @@ function buildLocationList(toilets) {
     const details = listing.appendChild(document.createElement('div'));
     details.innerHTML = `${toilet.properties.street_address}`;
     if (toilet.properties.code) {
-      details.innerHTML += ` <div class="listing-code"><p>${toilet.properties.code}</p></div><button class="button is-success" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">Get Directions</button>`;
+      details.innerHTML += ` <div class="listing-code"><p>Code ${toilet.properties.code}</p></div><button class="button is-info" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">Get Directions</button>`;
     }
 
     if (toilet.properties.distance) {
@@ -3830,6 +3831,7 @@ function buildLocationList(toilets) {
       this.parentNode.classList.add('active');
     });
 
+
   }
 }
 
@@ -3847,12 +3849,13 @@ function createPopUp(toilet) {
   console.log(toilet)
   const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: true })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <h4>code: ${toilet.properties.code}</h4><button class="get-directions button is-success m-1" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
+    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p>gender neutral: ${toilet.properties.gender_neutral}</p> <h4>code: ${toilet.properties.code}</h4><button class="get-directions button is-info m-1" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
     .addTo(map);
 
   // pop up heading styling
   const popUpHeadings = document.getElementsByTagName("h3")[0]
   popUpHeadings.classList.add("is-size-6")
+
 }
 
 // show nearest toilet after searching

@@ -10,7 +10,9 @@ body {
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
-}
+} 
+
+
 
 h1 {
   font-size: 22px;
@@ -54,7 +56,7 @@ a:hover {
   border-bottom: 1px solid #eee;
   height: 60px;
   line-height: 60px;
-  padding: 0 10px;
+  padding: 0 10px; 
 }
 
 .listings {
@@ -75,12 +77,13 @@ a:hover {
   display: block;
   color: #5d3754;
   font-weight: 700;
-}
+} 
+
 
 .listings .item .title small { font-weight: 400; }
 
 .listings .item.active .title,
-.listings .item .title:hover { color: #8cc63f; }
+.listings .item .title:hover { color: #916988; }
 
 .listings .item.active {
   background-color: #f8f8f8;
@@ -114,7 +117,7 @@ a:hover {
 }
 
 .mapboxgl-popup-content h3 {
-  background: #91c949;
+  background: #916988;
   color: #fff;
   margin: 0;
   padding: 10px;
@@ -138,7 +141,7 @@ a:hover {
 }
 
 .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
-  border-bottom-color: #91c949;
+  border-bottom-color: #916988;
 } 
 
 .marker {
@@ -177,8 +180,9 @@ a:hover {
 .listing-code{
   background-color:#5d3754;
   border-radius: 30px; 
-  padding: 8px; 
+  padding: 8px;  
+  display: inline-block;
 }  
 .listing-code p {
   color: #fff;
-}
+} 
