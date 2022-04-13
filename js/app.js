@@ -3853,6 +3853,10 @@ function createPopUp(toilet) {
     .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p class=" gender-popup p-2 has-text-centered">gender neutral: ${toilet.properties.gender_neutral}</p> <h4 class="popup-code">code: ${toilet.properties.code}</h4><button class="get-directions-btn button is-info m-3" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
     .addTo(map);
 
+  // pop up close button 
+  const popUpCloseBtn = document.getElementsByClassName("mapboxgl-popup-close-button")[0]
+  popUpCloseBtn.classList.add("delete", "is-medium")
+
   // pop up heading styling
   const popUpHeadings = document.getElementsByTagName("h3")[0]
   popUpHeadings.classList.add("is-size-6")
@@ -3918,6 +3922,3 @@ function getDirections(lat, long) {
   directions.setDestination([lat, long])
 };
 
-const popUpCloseBtn = document.getElementsByClassName("mapboxgl-popup-close-button")[0]
-// popUpCloseBtn.classList.add("delete", "is-medium")
-console.log(popUpCloseBtn).length

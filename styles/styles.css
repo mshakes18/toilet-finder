@@ -16,13 +16,18 @@ body {
   margin-bottom: 0;
 }
 
-h1 {
-  font-size: 22px;
-  margin: 0;
-  font-weight: 400;
+.search-title {
+  font-weight: 900;
   line-height: 20px;
-  padding: 20px 2px;
+  padding: 20px 2px; 
+  text-transform: none !important; 
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 30px; 
+  color: #5d3754; 
 }
+
+
+
 
 a {
   color: #404040;
@@ -109,7 +114,8 @@ a:hover {
 
 /* Marker tweaks */
 .mapboxgl-popup-close-button {
-  padding: 1px;
+  position: absolute !important; 
+  margin: 0 6px;
 }
 
 .mapboxgl-popup-content {
@@ -176,14 +182,15 @@ a:hover {
   display: block !important; 
   padding-top: 7px !important; 
   width: auto !important; 
-  
 } 
 
 .listing-code{
   border-radius: 30px; 
   padding: 8px;  
-  display: inline-block; 
-    background-color:#5d3754;
+  width: fit-content; 
+  background-color:#5d3754; 
+  margin: 10px;
+ 
 
 }  
 .listing-code p {
@@ -205,4 +212,22 @@ a:hover {
 
 .gender-popup{
   font-weight: 700;
+}
+.mapboxgl-ctrl-geocoder--suggestion-title, .mapboxgl-ctrl-geocoder input[type='text']{
+    font-family: 'Roboto', sans-serif; 
+    color: #5d3754;  
+    font-weight: 700;
+
+} 
+
+.mapboxgl-ctrl-geocoder--suggestion-address{
+  font-family: 'Roboto', sans-serif; 
+  color:#916988; 
+  font-weight: 300;
+}  
+
+.mapbox-directions-profile label{
+font-family: 'Roboto', sans-serif; 
+  color:#916988; 
+  font-size: 16px;
 }
