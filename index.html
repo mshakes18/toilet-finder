@@ -43,13 +43,17 @@
 </head>
 
 <body>
-  <div class='sidebar'>
-    <div class='heading'>
-      <h1 class="search-title">Find a Toilet</h1>
+  <div class="columns">
+    <div class="column is-mobile">
+      <div class='sidebar'>
+        <div class='heading'>
+          <h1 class="search-title">Find a Toilet</h1>
+        </div>
+        <div id='listings' class='listings'></div>
+      </div>
+      <div id="map" class="map">
+      </div>
     </div>
-    <div id='listings' class='listings'></div>
-  </div>
-  <div id="map" class="map">
   </div>
   <script src="./js/mapbox.js"></script>
   <script src="./js/app.js"></script>
