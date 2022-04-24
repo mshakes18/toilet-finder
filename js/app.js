@@ -3809,7 +3809,7 @@ function buildLocationList(toilets) {
     const details = listing.appendChild(document.createElement('div'));
     details.innerHTML = `${toilet.properties.street_address}`;
     if (toilet.properties.code) {
-      details.innerHTML += ` <div class="listing-code"><p>Code ${toilet.properties.code}</p></div><button class="button is-info" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">Get Directions</button>`;
+      details.innerHTML += ` <div class="listing-code"><p>Code ${toilet.properties.code}</p></div><button class="button is-info" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">Get Directions</button> <p class="listing-gender">Gender Neutral:${toilet.properties.gender_neutral}</p>`;
     }
 
     if (toilet.properties.distance) {
