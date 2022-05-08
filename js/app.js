@@ -3898,7 +3898,15 @@ function getBbox(sortedToilets, toiletIdentifier, searchResult) {
 }
 // Get directions button
 function getDirections(lat, long) {
-
+  const directionsTable = document.getElementsByClassName("directions-control-instructions")[0]
+  console.log(directionsTable)
+  const listingContainer = document.getElementById("listings")
+  listingContainer.insertBefore(directionsTable, listingContainer.firstChild)
+  // document.getElementById("listings").appendChild(directionsTable)
+  const allItems = document.querySelectorAll("#listings .item")
+  for (let i = 0; i < allItems.length; i++) {
+    allItems[i].style.display = "none"
+  }
   options = {
     enableHighAccuracy: true,
     timeout: 5000,
@@ -3920,5 +3928,12 @@ function getDirections(lat, long) {
   }
   navigator.geolocation.getCurrentPosition(success, error, options)
   directions.setDestination([lat, long])
+
+  const directionsHeading = document.getElementsByClassName("mapbox-directions-route-summary")[0]
+
+  console.log(directionsHeading)
+
+  directionsHeading.classList.add("testclassname")
 };
+
 
