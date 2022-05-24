@@ -3630,8 +3630,78 @@ map.on('load', () => {
   /* Add the data to your map as a layer */
   map.addSource('places', {
     type: 'geojson',
-    data: toilets
+    data: toilets,
+    cluster: true,
+    clusterMaxZoom: 20, // Max zoom to cluster points on
+    clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+
   });
+
+
+
+  map.addLayer({
+    id: 'clusters',
+    type: 'circle',
+    source: 'places',
+    filter: ['has', 'point_count'],
+    paint: {
+      // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+      // with three steps to implement three types of circles:
+      //   * Blue, 20px circles when point count is less than 100
+      //   * Yellow, 30px circles when point count is between 100 and 750
+      //   * Pink, 40px circles when point count is greater than or equal to 750
+      'circle-color': [
+        'step',
+        ['get', 'point_count'],
+        '#51bbd6',
+        100,
+        '#f1f075',
+        750,
+        '#f28cb1'
+      ],
+      'circle-radius': [
+        'step',
+        ['get', 'point_count'],
+        20,
+        50,
+        30,
+        750,
+        40
+      ]
+    }
+  });
+
+
+
+
+  map.addLayer({
+    id: 'cluster-count',
+    type: 'symbol',
+    source: 'places',
+    filter: ['has', 'point_count'],
+    layout: {
+      'text-field': '{point_count_abbreviated}',
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-size': 12
+    }
+  });
+
+  map.addLayer({
+    id: 'unclustered-point',
+    type: 'circle',
+    source: 'places',
+    filter: ['!', ['has', 'point_count']],
+    paint: {
+      'circle-color': '#ff00c3',
+      'circle-radius': 10,
+      'circle-stroke-width': 1,
+      'circle-stroke-color': '#fff'
+    }
+  });
+
+
+
+
   // geocoder
   const geocoder = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken, // Set the access token
@@ -3682,7 +3752,6 @@ map.on('load', () => {
     });
 
     createPopUp(toilets.features[0]);
-
   });
 
   // origin field
@@ -3694,6 +3763,7 @@ map.on('load', () => {
   searchListing.appendChild(toiletSearchField)
   toiletSearchField.classList.add("input", "is-rounded", "display-fix");
 });
+
 
 
 
@@ -3787,6 +3857,25 @@ map.on('click', (event) => {
 });
 
 
+// CLUSTER ON CLICK
+map.on('click', 'clusters', (e) => {
+  const features = map.queryRenderedFeatures(e.point, {
+    layers: ['clusters']
+  });
+  const clusterId = features[0].properties.cluster_id;
+  map.getSource('places').getClusterExpansionZoom(
+    clusterId,
+    (err, zoom) => {
+      if (err) return;
+
+      map.easeTo({
+        center: features[0].geometry.coordinates,
+        zoom: zoom
+      });
+    }
+  );
+});
+
 
 function buildLocationList(toilets) {
   for (const toilet of toilets.features) {
@@ -3839,7 +3928,7 @@ function buildLocationList(toilets) {
 function flyToStore(toilet) {
   map.flyTo({
     center: toilet.geometry.coordinates,
-    zoom: 13
+    zoom: 10
   });
 }
 
@@ -3902,10 +3991,9 @@ function getDirections(lat, long) {
   console.log(directionsTable)
   const listingContainer = document.getElementById("listings")
   listingContainer.insertBefore(directionsTable, listingContainer.firstChild)
-  // document.getElementById("listings").appendChild(directionsTable)
   const allItems = document.querySelectorAll("#listings .item")
   for (let i = 0; i < allItems.length; i++) {
-    allItems[i].style.display = "none"
+    allItems[i].style.display = "none" 
   }
   options = {
     enableHighAccuracy: true,
@@ -3929,11 +4017,33 @@ function getDirections(lat, long) {
   navigator.geolocation.getCurrentPosition(success, error, options)
   directions.setDestination([lat, long])
 
-  const directionsHeading = document.getElementsByClassName("mapbox-directions-route-summary")[0]
+  setTimeout(() => {
+    const directionsHeading = document.getElementsByClassName('mapbox-directions-route-summary')[0];
+    directionsTable.classList.remove('hideElement');
 
-  console.log(directionsHeading)
+    const numberOfCloseButtons = document.querySelectorAll(
+      '.mapbox-directions-route-summary .delete.is-medium'
+    ).length;
 
-  directionsHeading.classList.add("testclassname")
+    console.log(numberOfCloseButtons);
+
+    const div = document.createElement('div');
+    div.classList.add('delete', 'is-medium');
+
+    if (numberOfCloseButtons < 1) {
+      directionsHeading.insertBefore(div, directionsHeading.firstChild);
+    }
+
+    div.addEventListener('click', () => {
+      directionsTable.classList.add('hideElement');
+
+      for (let i = 0; i < allItems.length; i++) {
+        allItems[i].style.display = 'block';
+      }
+    });
+
+    console.log('set timeout');
+  }, 4000);
 };
 
 
