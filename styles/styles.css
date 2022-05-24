@@ -155,13 +155,13 @@ a:hover {
   border-bottom-color: #916988;
 } 
 
-.marker {
+/* .marker {
   border: none;
   cursor: pointer;
   height: 56px;
   width: 56px;
   background-image: url(./toilet-svgrepo-com.svg);
-} 
+}  */
 
 .mapboxgl-popup {
   padding-bottom: 50px;
@@ -255,7 +255,15 @@ font-family: 'Roboto', sans-serif;
 
   .mapboxgl-ctrl-geocoder .suggestions{
     z-index: 1001;
-  }
+  } 
+
+
+.hideElement {
+display: none;
+}
+
+
+
 /* MOBILE STYLES */
 @media screen and (max-width:500px){
   #map{
@@ -302,4 +310,5 @@ font-family: 'Roboto', sans-serif;
   padding: 0 20px;
   height: auto;
 } 
-}
+} 
+
