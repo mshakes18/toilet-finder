@@ -3993,7 +3993,7 @@ function getDirections(lat, long) {
   listingContainer.insertBefore(directionsTable, listingContainer.firstChild)
   const allItems = document.querySelectorAll("#listings .item")
   for (let i = 0; i < allItems.length; i++) {
-    allItems[i].style.display = "none" 
+    allItems[i].style.display = "none"
   }
   options = {
     enableHighAccuracy: true,
