@@ -3877,6 +3877,36 @@ map.on('click', 'clusters', (e) => {
 });
 
 
+map.on('click', 'unclustered-point', (e) => {
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const mag = e.features[0].properties.mag;
+  const tsunami =
+    e.features[0].properties.tsunami === 1 ? 'yes' : 'no';
+
+  // Ensure that if the map is zoomed out such that
+  // multiple copies of the feature are visible, the
+  // popup appears over the copy being pointed to.
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+
+  new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(
+      `magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`
+    )
+    .addTo(map);
+});
+
+map.on('mouseenter', 'clusters', () => {
+  map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'clusters', () => {
+  map.getCanvas().style.cursor = '';
+});
+
+
+
 function buildLocationList(toilets) {
   for (const toilet of toilets.features) {
     /* Add a new listing section to the sidebar. */
@@ -3990,7 +4020,10 @@ function getDirections(lat, long) {
   const directionsTable = document.getElementsByClassName("directions-control-instructions")[0]
   console.log(directionsTable)
   const listingContainer = document.getElementById("listings")
-  listingContainer.insertBefore(directionsTable, listingContainer.firstChild)
+  if (directionsTable) {
+    listingContainer.insertBefore(directionsTable, listingContainer.firstChild)
+  }
+
   const allItems = document.querySelectorAll("#listings .item")
   for (let i = 0; i < allItems.length; i++) {
     allItems[i].style.display = "none"
@@ -4019,7 +4052,14 @@ function getDirections(lat, long) {
 
   setTimeout(() => {
     const directionsHeading = document.getElementsByClassName('mapbox-directions-route-summary')[0];
-    directionsTable.classList.remove('hideElement');
+    if (directionsTable) {
+      directionsTable.classList.remove('hideElement');
+
+    }
+
+    // if (directionsTable) {
+    //   directionsTable.classList.add('hideElement');
+    // }
 
     const numberOfCloseButtons = document.querySelectorAll(
       '.mapbox-directions-route-summary .delete.is-medium'
@@ -4030,7 +4070,7 @@ function getDirections(lat, long) {
     const div = document.createElement('div');
     div.classList.add('delete', 'is-medium');
 
-    if (numberOfCloseButtons < 1) {
+    if (numberOfCloseButtons < 1 && directionsHeading) {
       directionsHeading.insertBefore(div, directionsHeading.firstChild);
     }
 
