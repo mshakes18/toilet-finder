@@ -3634,10 +3634,54 @@ map.on('load', () => {
     cluster: true,
     clusterMaxZoom: 20, // Max zoom to cluster points on
     clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
-
   });
 
 
+  // CLUSTER ON CLICK
+  map.on('click', 'clusters', (e) => {
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: ['clusters']
+    });
+    const clusterId = features[0].properties.cluster_id;
+    map.getSource('places').getClusterExpansionZoom(
+      clusterId,
+      (err, zoom) => {
+        if (err) return;
+
+        map.easeTo({
+          center: features[0].geometry.coordinates,
+          zoom: zoom
+        });
+      }
+    );
+  });
+
+
+  map.on('click', 'unclustered-point', (e) => {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const mag = e.features[0].properties.mag;
+    const tsunami =
+      e.features[0].properties.tsunami === 1 ? 'yes' : 'no';
+
+    // Ensure that if the map is zoomed out such that
+    // multiple copies of the feature are visible, the
+    // popup appears over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    new mapboxgl.Popup()
+      .setLngLat(toilet.geometry.coordinates)
+      .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p class=" gender-popup p-2 has-text-centered">gender neutral: ${toilet.properties.gender_neutral}</p> <h4 class="popup-code">code: ${toilet.properties.code}</h4><button class="get-directions-btn button is-info m-3" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
+      .addTo(map);
+  });
+
+  map.on('mouseenter', 'clusters', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+  map.on('mouseleave', 'clusters', () => {
+    map.getCanvas().style.cursor = '';
+  });
 
   map.addLayer({
     id: 'clusters',
@@ -3762,6 +3806,38 @@ map.on('load', () => {
   const searchListing = document.getElementsByClassName("heading")[0];
   searchListing.appendChild(toiletSearchField)
   toiletSearchField.classList.add("input", "is-rounded", "display-fix");
+
+
+  map.on('click', (event) => {
+    /* Determine if a feature in the "locations" layer exists at that point. */
+    const features = map.queryRenderedFeatures(event.point, {
+      layers: ['locations']
+    });
+
+    /* If it does not exist, return */
+    if (!features.length) return;
+
+    const clickedPoint = features[0];
+
+    /* Fly to the point */
+    flyToStore(clickedPoint);
+
+    /* Close all other popups and display popup for clicked store */
+    createPopUp(clickedPoint);
+
+    /* Highlight listing in sidebar (and remove highlight for all other listings) */
+    const activeItem = document.getElementsByClassName('active');
+    if (activeItem[0]) {
+      activeItem[0].classList.remove('active');
+    }
+    const listing = document.getElementById(
+      `listing-${clickedPoint.properties.id}`
+    );
+    listing.classList.add('active');
+  });
+
+
+
 });
 
 
@@ -3783,6 +3859,7 @@ geolocate.on('geolocate', (e) => {
 // directions fields 
 const directions = new MapboxDirections({
   accessToken: mapboxgl.accessToken,
+  interactive: false
 });
 map.addControl(directions, 'top-left');
 
@@ -3828,82 +3905,6 @@ function addMarkers() {
 
 }
 
-map.on('click', (event) => {
-  /* Determine if a feature in the "locations" layer exists at that point. */
-  const features = map.queryRenderedFeatures(event.point, {
-    layers: ['locations']
-  });
-
-  /* If it does not exist, return */
-  if (!features.length) return;
-
-  const clickedPoint = features[0];
-
-  /* Fly to the point */
-  flyToStore(clickedPoint);
-
-  /* Close all other popups and display popup for clicked store */
-  createPopUp(clickedPoint);
-
-  /* Highlight listing in sidebar (and remove highlight for all other listings) */
-  const activeItem = document.getElementsByClassName('active');
-  if (activeItem[0]) {
-    activeItem[0].classList.remove('active');
-  }
-  const listing = document.getElementById(
-    `listing-${clickedPoint.properties.id}`
-  );
-  listing.classList.add('active');
-});
-
-
-// CLUSTER ON CLICK
-map.on('click', 'clusters', (e) => {
-  const features = map.queryRenderedFeatures(e.point, {
-    layers: ['clusters']
-  });
-  const clusterId = features[0].properties.cluster_id;
-  map.getSource('places').getClusterExpansionZoom(
-    clusterId,
-    (err, zoom) => {
-      if (err) return;
-
-      map.easeTo({
-        center: features[0].geometry.coordinates,
-        zoom: zoom
-      });
-    }
-  );
-});
-
-
-map.on('click', 'unclustered-point', (e) => {
-  const coordinates = e.features[0].geometry.coordinates.slice();
-  const mag = e.features[0].properties.mag;
-  const tsunami =
-    e.features[0].properties.tsunami === 1 ? 'yes' : 'no';
-
-  // Ensure that if the map is zoomed out such that
-  // multiple copies of the feature are visible, the
-  // popup appears over the copy being pointed to.
-  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-  }
-
-  new mapboxgl.Popup()
-    .setLngLat(coordinates)
-    .setHTML(
-      `magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`
-    )
-    .addTo(map);
-});
-
-map.on('mouseenter', 'clusters', () => {
-  map.getCanvas().style.cursor = 'pointer';
-});
-map.on('mouseleave', 'clusters', () => {
-  map.getCanvas().style.cursor = '';
-});
 
 
 
