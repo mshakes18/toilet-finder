@@ -3637,6 +3637,7 @@ map.on('load', () => {
   });
 
 
+
   // CLUSTER ON CLICK
   map.on('click', 'clusters', (e) => {
     const features = map.queryRenderedFeatures(e.point, {
@@ -3836,13 +3837,7 @@ map.on('load', () => {
     listing.classList.add('active');
   });
 
-
-
 });
-
-
-
-
 
 // Set an event listener that fires
 // when a geolocate event occurs.
@@ -3855,15 +3850,12 @@ geolocate.on('geolocate', (e) => {
 
 });
 
-
 // directions fields 
 const directions = new MapboxDirections({
   accessToken: mapboxgl.accessToken,
   interactive: false
 });
 map.addControl(directions, 'top-left');
-
-
 
 /** * Add a marker to the map for every store listing.
       **/
@@ -3904,9 +3896,6 @@ function addMarkers() {
   }
 
 }
-
-
-
 
 function buildLocationList(toilets) {
   for (const toilet of toilets.features) {
