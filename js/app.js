@@ -3673,7 +3673,7 @@ map.on('load', () => {
 
     new mapboxgl.Popup()
       .setLngLat(toilet.geometry.coordinates)
-      .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p class=" gender-popup p-2 has-text-centered">gender neutral: ${toilet.properties.gender_neutral}</p> <h4 class="popup-code">code: ${toilet.properties.code}</h4><button class="get-directions-btn button is-info m-3" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
+      .createPopUp(toilet)
       .addTo(map);
   });
 
