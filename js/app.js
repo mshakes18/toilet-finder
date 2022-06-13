@@ -104,8 +104,8 @@ const toilets = {
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.134607202,
-          51.51493007
+          -0.133250,
+          51.516340
         ]
       }
     },
@@ -3660,6 +3660,8 @@ map.on('load', () => {
 
   map.on('click', 'unclustered-point', (e) => {
     const coordinates = e.features[0].geometry.coordinates.slice();
+    console.log(coordinates);
+    console.log(e.features[0])
     const mag = e.features[0].properties.mag;
     const tsunami =
       e.features[0].properties.tsunami === 1 ? 'yes' : 'no';
@@ -3670,11 +3672,29 @@ map.on('load', () => {
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
+    // for (const marker of toilets.features) {
 
-    new mapboxgl.Popup()
-      .setLngLat(toilet.geometry.coordinates)
-      .createPopUp(toilet)
+    // createPopUp(toilets.features[0]); 
+    // new mapboxgl.Popup()
+    //   .setLngLat(coordinates)
+    //   .setHTML(
+    //     `magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`
+    //   )
+    //   .addTo(map); 
+
+    const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: true })
+      .setLngLat(coordinates)
+      .setHTML(`<h3>${e.features[0].properties.business_name}</h3><h4>${e.features[0].properties.street_address}</h4><p class=" gender-popup p-2 has-text-centered">gender neutral: ${e.features[0].properties.gender_neutral}</p> <h4 class="popup-code">code: ${e.features[0].properties.code}</h4><button class="get-directions-btn button is-info m-3" onclick="getDirections(${e.features[0].geometry.coordinates[0]},${e.features[0].geometry.coordinates[1]})">get directions</button>`)
       .addTo(map);
+    // pop up close button
+    const popUpCloseBtn = document.getElementsByClassName("mapboxgl-popup-close-button")[0]
+    popUpCloseBtn.classList.add("delete", "is-medium")
+
+    // pop up heading styling
+    const popUpHeadings = document.getElementsByTagName("h3")[0]
+    popUpHeadings.classList.add("is-size-6")
+
+    console.log("clicking unclustered point")
   });
 
   map.on('mouseenter', 'clusters', () => {
@@ -3698,11 +3718,11 @@ map.on('load', () => {
       'circle-color': [
         'step',
         ['get', 'point_count'],
-        '#51bbd6',
+        '#3e8ed0',
         100,
         '#f1f075',
         750,
-        '#f28cb1'
+        '#5d3754'
       ],
       'circle-radius': [
         'step',
@@ -3727,7 +3747,7 @@ map.on('load', () => {
     layout: {
       'text-field': '{point_count_abbreviated}',
       'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-      'text-size': 12
+      'text-size': 14
     }
   });
 
@@ -3737,9 +3757,9 @@ map.on('load', () => {
     source: 'places',
     filter: ['!', ['has', 'point_count']],
     paint: {
-      'circle-color': '#ff00c3',
+      'circle-color': '#916988',
       'circle-radius': 10,
-      'circle-stroke-width': 1,
+      'circle-stroke-width': 2,
       'circle-stroke-color': '#fff'
     }
   });
@@ -3801,7 +3821,6 @@ map.on('load', () => {
 
   // origin field
   const originField = document.getElementById("mapbox-directions-origin-input");
-  originField.classList.add("input", "is-rounded");
   // toilet search
   const toiletSearchField = document.getElementsByClassName("mapboxgl-ctrl-geocoder mapboxgl-ctrl")[0];
   const searchListing = document.getElementsByClassName("heading")[0];
@@ -3809,12 +3828,15 @@ map.on('load', () => {
   toiletSearchField.classList.add("input", "is-rounded", "display-fix");
 
 
+
+
+
   map.on('click', (event) => {
     /* Determine if a feature in the "locations" layer exists at that point. */
     const features = map.queryRenderedFeatures(event.point, {
-      layers: ['locations']
+      layers: ['clusters']
     });
-
+    console.log("clicking toilet")
     /* If it does not exist, return */
     if (!features.length) return;
 
@@ -3959,16 +3981,16 @@ function createPopUp(toilet) {
   console.log(toilet)
   const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: true })
     .setLngLat(toilet.geometry.coordinates)
-    .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p class=" gender-popup p-2 has-text-centered">gender neutral: ${toilet.properties.gender_neutral}</p> <h4 class="popup-code">code: ${toilet.properties.code}</h4><button class="get-directions-btn button is-info m-3" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
+    // .setHTML(`<h3>${toilet.properties.business_name}</h3><h4>${toilet.properties.street_address}</h4><p class=" gender-popup p-2 has-text-centered">gender neutral: ${toilet.properties.gender_neutral}</p> <h4 class="popup-code">code: ${toilet.properties.code}</h4><button class="get-directions-btn button is-info m-3" onclick="getDirections(${toilet.geometry.coordinates[0]},${toilet.geometry.coordinates[1]})">get directions</button>`)
     .addTo(map);
 
   // pop up close button 
   const popUpCloseBtn = document.getElementsByClassName("mapboxgl-popup-close-button")[0]
-  popUpCloseBtn.classList.add("delete", "is-medium")
+  // popUpCloseBtn.classList.add("delete", "is-large")
 
-  // pop up heading styling
-  const popUpHeadings = document.getElementsByTagName("h3")[0]
-  popUpHeadings.classList.add("is-size-6")
+  // // pop up heading styling
+  // const popUpHeadings = document.getElementsByTagName("h3")[0]
+  // popUpHeadings.classList.add("is-size-6")
 
 }
 
@@ -4047,12 +4069,8 @@ function getDirections(lat, long) {
 
     }
 
-    // if (directionsTable) {
-    //   directionsTable.classList.add('hideElement');
-    // }
-
     const numberOfCloseButtons = document.querySelectorAll(
-      '.mapbox-directions-route-summary .delete.is-medium'
+      '.mapbox-directions-route-summary .delete .is-medium'
     ).length;
 
     console.log(numberOfCloseButtons);
