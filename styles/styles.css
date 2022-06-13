@@ -186,6 +186,7 @@ a:hover {
   display: block !important; 
   padding-top: 7px !important; 
   width: auto !important;  
+  text-transform: uppercase;
 } 
 
 .listing-code,.listing-gender{
@@ -216,7 +217,7 @@ a:hover {
 .mapboxgl-ctrl-geocoder--suggestion-title, .mapboxgl-ctrl-geocoder input[type='text']{
     font-family: 'Roboto', sans-serif; 
     color: #5d3754;  
-    font-weight: 700;
+    font-weight: 700; 
 
 } 
 
@@ -238,20 +239,15 @@ font-family: 'Roboto', sans-serif;
 /* DIRECTIONS PANEL */
 .mapbox-directions-step-maneuver{
 font-family: 'Roboto', sans-serif;
-  color:#916988;
+  color:#fff;
   font-size: 16px;
 }  
 .mapbox-directions-step-distance{
   font-family: 'Roboto', sans-serif;
-  color:#916988;
+  color:#fff;
   font-size: 16px;
 }
-.directions-icon .directions-icon-right{
-  background-color: #101010;
-}
-.mapbox-directions-instructions{
-  background-color: #fff
-}  
+
 
   .mapboxgl-ctrl-geocoder .suggestions{
     z-index: 1001;
@@ -262,6 +258,17 @@ font-family: 'Roboto', sans-serif;
 display: none;
 }
 
+.mapboxgl-ctrl-geocoder--input{
+  text-transform: uppercase !important;
+}  
+
+.mapbox-directions-route-summary span{ 
+  color: #fff
+} 
+
+.mapbox-directions-route-summary{
+  z-index: 0;
+}
 
 
 /* MOBILE STYLES */
